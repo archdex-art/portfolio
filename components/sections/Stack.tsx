@@ -1,11 +1,13 @@
 "use client";
 
-import { useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { skillGroups } from "@/lib/data/skills";
 import { Section, SectionHeading } from "@/components/ui/Section";
 import { Reveal } from "@/components/ui/Reveal";
 
+const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+const groupSlugs = skillGroups.map((g) => slugify(g.name));
 const roadmap = [
   {
     label: "Runtime",
@@ -80,8 +82,26 @@ function SkillMeter({
 
 export function Stack() {
   const reduce = useReducedMotion() ?? false;
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState(() => {
+    if (typeof window === "undefined") return 0;
+    const tab = new URLSearchParams(window.location.search).get("tab");
+    const idx = tab ? groupSlugs.indexOf(tab) : -1;
+    return idx >= 0 ? idx : 0;
+  });
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  // Deep-link the active category into the URL (?tab=…) via the plain
+  // history API — this section lives on the static homepage, so it avoids
+  // useSearchParams and the Suspense boundary that would require. Initial
+  // state is read by the lazy useState initializer above; this effect only
+  // ever writes.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (active > 0) params.set("tab", groupSlugs[active]);
+    else params.delete("tab");
+    const search = params.toString();
+    window.history.replaceState(null, "", `${window.location.pathname}${search ? `?${search}` : ""}`);
+  }, [active]);
 
   const group = skillGroups[active];
 

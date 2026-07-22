@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Section, SectionHeading } from "@/components/ui/Section";
 import { Button } from "@/components/ui/Button";
@@ -9,11 +9,39 @@ import { ProjectCard } from "@/components/work/ProjectCard";
 
 const filters = ["All", ...categories] as const;
 
+function initialQuery(): string {
+  if (typeof window === "undefined") return "";
+  return new URLSearchParams(window.location.search).get("work_q") ?? "";
+}
+
+function initialCategory(): (typeof filters)[number] {
+  if (typeof window === "undefined") return "All";
+  const cat = new URLSearchParams(window.location.search).get("work_cat");
+  return cat && (filters as readonly string[]).includes(cat) ? (cat as (typeof filters)[number]) : "All";
+}
+
 export function Work() {
   const reduce = useReducedMotion();
   const searchId = useId();
-  const [query, setQuery] = useState("");
-  const [active, setActive] = useState<(typeof filters)[number]>("All");
+  const [query, setQuery] = useState(initialQuery);
+  const [active, setActive] = useState<(typeof filters)[number]>(initialCategory);
+
+  // Deep-link filter state into the URL (?work_q=…&work_cat=…) without
+  // triggering navigation or a Next.js Suspense requirement — this section
+  // lives on the static homepage, so plain history.replaceState keeps state
+  // shareable/bookmarkable while staying off the static-render critical path.
+  // (Initial read happens in the lazy useState initializers above, not here,
+  // so this effect only ever writes — it never calls setState.)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (query.trim()) params.set("work_q", query.trim());
+    else params.delete("work_q");
+    if (active !== "All") params.set("work_cat", active);
+    else params.delete("work_cat");
+    const search = params.toString();
+    const url = `${window.location.pathname}${search ? `?${search}` : ""}${window.location.hash}`;
+    window.history.replaceState(null, "", url);
+  }, [query, active]);
 
   const ordered = useMemo(
     () => [...projects].sort((a, b) => Number(b.featured) - Number(a.featured)),
@@ -59,6 +87,8 @@ export function Work() {
           <input
             id={searchId}
             type="search"
+            name="work_q"
+            autoComplete="off"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search projects, e.g. “Go” or “observability”…"
@@ -76,7 +106,7 @@ export function Work() {
                 onClick={() => setActive(f)}
                 aria-pressed={isActive}
                 className={[
-                  "rounded-full border px-4 py-2 font-mono text-xs tracking-wide transition-all duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-copper-bright",
+                  "rounded-full border px-4 py-2 font-mono text-xs tracking-wide transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-copper-bright",
                   isActive
                     ? "border-copper bg-copper/15 text-copper-bright"
                     : "border-hairline bg-surface/40 text-ink-dim hover:border-hairline-strong hover:text-ink",

@@ -37,6 +37,7 @@ interface ButtonElProps extends CommonProps {
   external?: never;
   onClick?: () => void;
   type?: "button" | "submit";
+  disabled?: boolean;
 }
 
 type Props = LinkProps | ButtonElProps;
@@ -92,9 +93,9 @@ export function Button(props: Props) {
     );
   }
 
-  const { onClick, type = "button" } = props as ButtonElProps;
+  const { onClick, type = "button", disabled } = props as ButtonElProps;
   return (
-    <button type={type} onClick={onClick} className={classes} onMouseMove={handleMove} onMouseLeave={handleLeave}>
+    <button type={type} onClick={onClick} disabled={disabled} className={classes} onMouseMove={handleMove} onMouseLeave={handleLeave}>
       {inner}
     </button>
   );

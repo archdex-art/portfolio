@@ -12,7 +12,7 @@ export function ProjectCard({ project }: { project: Project }) {
       <Link
         href={`/work/${project.slug}`}
         aria-label={`${project.name} — ${project.tagline}`}
-        className="flex h-full flex-col overflow-hidden rounded-2xl border border-hairline bg-surface/40 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5 hover:border-copper/50 hover:bg-surface/70 hover:shadow-[0_28px_80px_-32px_rgba(224,101,58,0.45)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-copper-bright motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+        className="flex h-full flex-col overflow-hidden rounded-2xl border border-hairline bg-surface/40 transition-[transform,border-color,background-color,box-shadow] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5 hover:border-copper/50 hover:bg-surface/70 hover:shadow-[0_28px_80px_-32px_rgba(224,101,58,0.45)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-copper-bright motion-reduce:transition-none motion-reduce:hover:translate-y-0"
       >
         {/* Cover */}
         <div className="relative overflow-hidden">
@@ -57,7 +57,7 @@ export function ProjectCard({ project }: { project: Project }) {
               </div>
               <span
                 aria-hidden
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-hairline text-ink-dim transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:border-copper group-hover:text-copper motion-reduce:transition-none motion-reduce:group-hover:translate-x-0 motion-reduce:group-hover:translate-y-0"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-hairline text-ink-dim transition-[transform,border-color,color] duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:border-copper group-hover:text-copper motion-reduce:transition-none motion-reduce:group-hover:translate-x-0 motion-reduce:group-hover:translate-y-0"
               >
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M7 17 17 7" />

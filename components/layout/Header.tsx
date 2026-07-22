@@ -31,7 +31,7 @@ export function Header() {
     <header className="fixed inset-x-0 top-0 z-50">
       <div
         className={cn(
-          "mx-auto flex max-w-[80rem] items-center justify-between px-5 transition-all duration-500 md:px-8",
+          "mx-auto flex max-w-[80rem] items-center justify-between px-5 transition-[margin,padding,background-color,border-color,border-radius,backdrop-filter] duration-500 md:px-8",
           scrolled
             ? "my-2.5 rounded-full border border-hairline bg-obsidian/70 py-2.5 backdrop-blur-xl md:my-3"
             : "my-0 border border-transparent py-5",

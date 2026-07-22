@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Tag } from "@/components/ui/Tag";
@@ -12,8 +12,28 @@ interface BlogIndexProps {
 }
 
 export function BlogIndex({ posts, tags }: BlogIndexProps) {
-  const [query, setQuery] = useState("");
-  const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [query, setQuery] = useState(() =>
+    typeof window === "undefined" ? "" : new URLSearchParams(window.location.search).get("q") ?? "",
+  );
+  const [activeTag, setActiveTag] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    const tag = new URLSearchParams(window.location.search).get("tag");
+    return tag && tags.includes(tag) ? tag : null;
+  });
+
+  // Deep-link filter state into the URL (?q=…&tag=…) — plain history API,
+  // no useSearchParams, so this static /blog route never needs a Suspense
+  // boundary or bails out of static generation. Initial state is read by
+  // the lazy useState initializers above; this effect only ever writes.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (query.trim()) params.set("q", query.trim());
+    else params.delete("q");
+    if (activeTag) params.set("tag", activeTag);
+    else params.delete("tag");
+    const search = params.toString();
+    window.history.replaceState(null, "", `${window.location.pathname}${search ? `?${search}` : ""}`);
+  }, [query, activeTag]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -35,10 +55,12 @@ export function BlogIndex({ posts, tags }: BlogIndexProps) {
           <span className="sr-only">Search writing</span>
           <input
             type="search"
+            name="q"
+            autoComplete="off"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search posts…"
-            className="w-full rounded-full border border-hairline bg-surface/60 px-5 py-3 text-sm text-ink placeholder:text-ink-faint focus-visible:border-copper focus-visible:outline-none"
+            className="w-full rounded-full border border-hairline bg-surface/60 px-5 py-3 text-sm text-ink placeholder:text-ink-faint transition-colors duration-200 focus-visible:border-copper focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-copper/40"
           />
         </label>
 

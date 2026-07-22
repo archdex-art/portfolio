@@ -121,7 +121,7 @@ export function Contact() {
                   aria-invalid={Boolean(errors.name)}
                   aria-describedby={errors.name ? "name-error" : undefined}
                   className={fieldBase}
-                  placeholder="Your name"
+                  placeholder="Your name…"
                 />
                 <p id="name-error" aria-live="polite" className="min-h-[1rem] text-sm text-copper-bright">
                   {errors.name}
@@ -137,6 +137,7 @@ export function Contact() {
                   name="email"
                   type="email"
                   autoComplete="email"
+                  spellCheck={false}
                   required
                   aria-invalid={Boolean(errors.email)}
                   aria-describedby={errors.email ? "email-error" : undefined}
@@ -180,7 +181,18 @@ export function Contact() {
               </div>
 
               <div className="flex flex-wrap items-center gap-4">
-                <Button type="submit" variant="primary">
+                <Button type="submit" variant="primary" disabled={status === "submitting"}>
+                  {status === "submitting" && (
+                    <svg
+                      className="h-4 w-4 animate-spin motion-reduce:animate-none"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden
+                    >
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+                      <path className="opacity-90" d="M22 12a10 10 0 0 0-10-10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+                    </svg>
+                  )}
                   {status === "submitting" ? "Sending…" : "Send message"}
                 </Button>
                 {status === "error" && formError && (
