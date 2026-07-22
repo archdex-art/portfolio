@@ -1,0 +1,137 @@
+---
+title: "Capability-Gated OS Automation"
+description: "SuperSearch drives macOS from natural-language intent — safely. An object-capability model in Rust, argv-only execution with no shell interpolation, an append-only journal, and a fueled WASM plugin sandbox."
+date: "2026-04-30"
+tags: ["SuperSearch", "Rust", "Security", "Capabilities", "macOS", "WASM"]
+category: "Runtime & Systems"
+---
+
+Giving software permission to *do things to your operating system* on your behalf
+is a security problem dressed up as a convenience. A launcher that can only search
+is safe and boring. A runtime that can take "open Brave in incognito and search
+what is regression" and actually execute it is useful — and one careless
+`sh -c` away from a disaster.
+
+SuperSearch is the second thing built like the first. It is an **intent-driven
+runtime kernel** for macOS: a React command palette over a Tauri host over a Rust
+kernel that classifies intents, compiles them into inspectable task graphs, and
+executes them — behind an **object-capability** security model that assumes every
+action is dangerous until a token says otherwise.
+
+## Intents compile to inspectable graphs
+
+Natural language is not executed directly; it is *compiled*. A rule-based
+classifier (`patterns.rs`) maps an utterance to a **closed set** of intents — no
+open-ended model deciding what your machine should do. A planner turns the intent
+into a `TaskGraph`, a DAG of concrete actions you can inspect before anything
+runs:
+
+```
+"open brave incognito and search what is regression"
+        │  patterns.rs (rule-based classifier)
+        ▼
+   Intent::BrowseIncognito { app: "Brave", query: "what is regression" }
+        │  planner.rs
+        ▼
+   TaskGraph
+   ├── launch(app="Brave", flags=["--incognito"])
+   └── navigate(url="https://…/search?q=what+is+regression")
+```
+
+Because the graph is data, every query becomes **replayable and inspectable**.
+Intent classification is fully local — app launches and file lookups never leave
+the machine.
+
+## The capability gate sits in front of the OS
+
+Here is the load-bearing invariant: **before any OS action runs**, the executor
+maps it to a required `(Namespace, Permission)` and asks the `CapabilityGate`
+whether the agent's revocable token authorizes it. A denied action **never spawns
+a process** — the check happens before the OS is touched at all.
+
+```rust
+// executor.rs — the gate is on the live path, not an afterthought.
+fn execute(&self, action: &Action) -> Result<Output> {
+    let need = action.required_capability();     // (Namespace, Permission)
+    self.gate.authorize(&self.token, need)?;      // denied → return before spawn
+    self.journal.record(Event::Authorized { action, need });
+    let output = self.spawn_argv(action)?;        // only now do we touch the OS
+    self.journal.record(Event::Result { action, output: &output });
+    Ok(output)
+}
+```
+
+This is object-capability thinking: authority is a *thing you hold*, scoped and
+revocable, not an ambient permission everyone shares. The invariant is nailed down
+by the test `action_without_capability_is_blocked_before_touching_the_os` — the
+name is the specification.
+
+## Argv-only execution: shell metacharacters are inert
+
+The most common way OS automation goes wrong is string-building. The moment user
+input is concatenated into a command line for `sh -c`, a query containing
+`; rm -rf ~` stops being text and becomes a command.
+
+SuperSearch never builds that string. **Every action carrying user-derived data
+is executed by spawning the target binary with an argument vector** — `open`,
+`mdfind`, `osascript` — so shell metacharacters are just bytes:
+
+```rust
+// User data is an argv element, never a fragment of a shell string.
+Command::new("mdfind")
+    .arg(&user_query)   // "; rm -rf ~"  → a literal search term, inert
+    .output()?;
+
+// AppleScript binds values as `on run argv` items — not interpolated into source.
+Command::new("osascript")
+    .arg(script_path)
+    .arg(&user_value)   // arrives as item 1 of argv, not spliced into the script
+    .output()?;
+```
+
+There is no shell to interpret anything. A malicious query is, at worst, a
+nonsense argument to a real binary — and every action carries a **hard per-action
+timeout** so a hung process cannot wedge the runtime.
+
+## An append-only journal you can replay
+
+Security you cannot audit is a promise, not a control. Every gate decision and
+every OS result is written to an **append-only journal**, producing a replayable
+audit trail of exactly what the runtime was asked to do, what it authorized, and
+what happened:
+
+- `Authorized { action, capability }` — the gate said yes, and why.
+- `Denied { action, capability }` — the gate said no, before any spawn.
+- `Result { action, output }` — what the OS actually returned.
+
+Because entries are only ever appended, the trail cannot be quietly rewritten
+after the fact — the same property that makes the journal useful for debugging
+makes it trustworthy as evidence.
+
+## Plugins run in a fueled WASM sandbox
+
+Extensibility is where most secure systems spring a leak. SuperSearch keeps the
+same capability discipline at the plugin boundary. Extensions come in two forms,
+both consent-based and capability-gated:
+
+1. **Script extensions** — spawned argv-only, with a 10-second timeout.
+2. **WASM modules** — loaded into a `wasmtime` host with **fuel and memory
+   limits**, so a plugin cannot burn unbounded CPU or memory, and cannot reach the
+   OS except through capabilities it was explicitly granted.
+
+Fuel metering means a runaway loop halts deterministically instead of pinning a
+core; memory limits mean a plugin cannot balloon the host. The plugin is powerful
+inside its sandbox and powerless outside it.
+
+## Assume every action is dangerous
+
+The architecture is a pipeline of deliberate chokepoints:
+`patterns.rs` classifier → `planner.rs` TaskGraph → `executor.rs` argv spawns,
+with `capability/`, `journal/`, `scheduler/`, `reactive/`, and the `plugin/` WASM
+host arranged so that authority is always checked, input is never interpreted, and
+every decision is recorded.
+
+Autonomy over your operating system is worth having only if it is safe by
+construction. Gate the capabilities, pass arguments as vectors, journal
+everything, and sandbox the extensions — then a runtime that can drive your whole
+machine is something you can actually trust to.

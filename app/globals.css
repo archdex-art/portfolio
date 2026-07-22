@@ -1,0 +1,280 @@
+@import "tailwindcss";
+
+/* ============================================================
+   ARCHDEX — "Editorial Engineering"
+   Warm-dark luxury. Obsidian base · warm ivory ink ·
+   burnt-copper accent · sage "live" signal.
+   ============================================================ */
+
+@theme {
+  /* — Surfaces (warm near-black, layered) — */
+  --color-obsidian: #0b0a09;
+  --color-surface: #131110;
+  --color-surface-2: #1b1817;
+  --color-surface-3: #262220;
+  --color-hairline: #2e2926;
+  --color-hairline-strong: #453f3a;
+
+  /* — Ink (warm ivory scale) — */
+  --color-ink: #f6f1e9;
+  --color-ink-muted: #b8afa3;
+  --color-ink-dim: #8a8078;
+  --color-ink-faint: #867c72; /* WCAG AA: 4.84:1 on obsidian, 4.61:1 on surface */
+
+  /* — Copper accent — */
+  --color-copper: #e0653a;
+  --color-copper-bright: #f2794a;
+  --color-copper-soft: #c9542d;
+  --color-copper-glow: #ff8a5c;
+
+  /* — Sage "live" signal — */
+  --color-sage: #a6c77e;
+  --color-sage-dim: #7f9f5c;
+
+  /* — Fonts — */
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, "SF Mono", monospace;
+
+  /* — Radii — */
+  --radius-xs: 0.375rem;
+  --radius-sm: 0.625rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.25rem;
+  --radius-xl: 1.75rem;
+  --radius-2xl: 2.25rem;
+
+  /* — Shadows / elevation (warm-tinted) — */
+  --shadow-soft: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+  --shadow-lift: 0 2px 4px rgba(0,0,0,.5), 0 24px 60px -24px rgba(0,0,0,.75);
+  --shadow-copper: 0 10px 40px -14px rgba(224,101,58,.45);
+
+  /* — Easing / timing — */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0.05, 0.36, 1);
+
+  /* — Content width — */
+  --spacing-shell: 76rem;
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+@layer base {
+  * {
+    border-color: var(--color-hairline);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 6rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  body {
+    background-color: var(--color-obsidian);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv01", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: rgba(224, 101, 58, 0.28);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-copper-bright);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1.02;
+  }
+
+  /* Custom warm scrollbar */
+  ::-webkit-scrollbar { width: 11px; height: 11px; }
+  ::-webkit-scrollbar-track { background: var(--color-obsidian); }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-surface-3);
+    border-radius: 99px;
+    border: 3px solid var(--color-obsidian);
+  }
+  ::-webkit-scrollbar-thumb:hover { background: var(--color-hairline-strong); }
+}
+
+/* ============================================================
+   Utilities
+   ============================================================ */
+@layer utilities {
+  .shell {
+    width: 100%;
+    max-width: var(--spacing-shell);
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+  @media (min-width: 768px) {
+    .shell { padding-inline: 2.5rem; }
+  }
+
+  /* Fraunces optical size — big display */
+  .font-display { font-family: var(--font-display); }
+  .display-optical { font-variation-settings: "opsz" 144, "SOFT" 0, "WONK" 0; }
+
+  .text-balance { text-wrap: balance; }
+  .text-pretty { text-wrap: pretty; }
+
+  /* Copper gradient text */
+  .text-gradient-copper {
+    background: linear-gradient(103deg, var(--color-ink) 0%, var(--color-copper-glow) 55%, var(--color-copper) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .text-gradient-ink {
+    background: linear-gradient(180deg, var(--color-ink) 0%, color-mix(in oklab, var(--color-ink) 55%, var(--color-obsidian)) 130%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Glass panel — used sparingly */
+  .glass {
+    background: color-mix(in oklab, var(--color-surface) 72%, transparent);
+    backdrop-filter: blur(16px) saturate(1.2);
+    -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    border: 1px solid var(--color-hairline);
+  }
+
+  /* Hairline eyebrow label */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-copper);
+  }
+
+  /* Grain overlay */
+  .grain::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 260 260' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Ambient copper glow blob */
+  .glow-copper {
+    background: radial-gradient(closest-side, rgba(224,101,58,0.20), rgba(224,101,58,0.06) 55%, transparent 78%);
+  }
+  .glow-sage {
+    background: radial-gradient(closest-side, rgba(166,199,126,0.14), transparent 72%);
+  }
+
+  /* Fine grid texture */
+  .grid-lines {
+    background-image:
+      linear-gradient(to right, var(--color-hairline) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--color-hairline) 1px, transparent 1px);
+    background-size: 3.5rem 3.5rem;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 78%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 78%);
+  }
+
+  .hairline-x {
+    background-image: linear-gradient(90deg, transparent, var(--color-hairline) 12%, var(--color-hairline) 88%, transparent);
+    height: 1px;
+  }
+
+  .link-underline {
+    background-image: linear-gradient(var(--color-copper), var(--color-copper));
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.4s var(--ease-out-expo);
+  }
+  .link-underline:hover { background-size: 100% 1px; }
+}
+
+/* ============================================================
+   Keyframe animations
+   ============================================================ */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 0.7; }
+  70%, 100% { transform: scale(2.2); opacity: 0; }
+}
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(4%, -6%) scale(1.08); }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to { background-position: 200% 0; }
+}
+
+.anim-rise { animation: rise 0.9s var(--ease-out-expo) both; }
+.anim-fade { animation: fade 1.2s ease both; }
+.anim-drift { animation: drift 22s ease-in-out infinite; }
+
+/* Skeleton shimmer */
+.skeleton {
+  background: linear-gradient(100deg, var(--color-surface) 30%, var(--color-surface-2) 50%, var(--color-surface) 70%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s infinite linear;
+}
+
+/* Live status dot */
+.live-dot { position: relative; }
+.live-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: var(--color-sage);
+  animation: pulse-ring 2.4s var(--ease-out-expo) infinite;
+}
+
+/* Marquee track */
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 42s linear infinite;
+}
+.marquee-track:hover { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track, .anim-drift, .live-dot::after, .skeleton { animation: none !important; }
+}

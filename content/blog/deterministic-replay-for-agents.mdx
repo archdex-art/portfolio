@@ -1,0 +1,115 @@
+---
+title: "Deterministic Replay for AI Agents"
+description: "AgentMesh treats agent runs like distributed systems: framework-agnostic OpenTelemetry tracing, exact replay by injecting recorded tool outputs, and MCP governance you can add without rewriting your stack."
+date: "2026-05-27"
+tags: ["AgentMesh", "Observability", "OpenTelemetry", "Determinism", "Go", "MCP"]
+category: "AI Infrastructure"
+---
+
+An agent run is a distributed system with amnesia. It fans out across tools,
+sub-agents, and model calls; it fails intermittently; and when it does, you
+usually cannot reproduce the failure because the world it ran against has already
+moved on. Every framework — LangGraph, CrewAI, AutoGen, the OpenAI Agents SDK —
+solves observability its own way, replay not at all, and tool governance not
+really.
+
+AgentMesh is **infrastructure, not another agent framework**. It sits alongside
+your workloads as a control plane: SDKs emit spans, a collector persists them, a
+query API serves traces and cost, an MCP gateway governs tool calls, and a replay
+engine re-runs any historical trace exactly. You keep your framework; you gain
+the ability to *see*, *reproduce*, and *govern*.
+
+## Tracing without instrumenting frameworks
+
+The temptation is to write an adapter per framework and chase their internals
+forever. AgentMesh refuses that. The SDKs speak **OpenTelemetry** with a
+documented wire contract (`otlp-mapping.md`), so one collector ingests spans
+regardless of what produced them.
+
+A run becomes a DAG of spans capturing token usage, latency, and every
+agent-to-tool handoff:
+
+```
+run (root span)
+├── agent: planner        tokens=812  latency=1.2s
+│   └── tool: web.search  args={q:"otel spans"}  → result#1
+├── agent: writer         tokens=2140 latency=3.4s
+│   ├── tool: db.query    args={sql:"..."}       → result#2
+│   └── tool: http.post   args={url:"..."}       → result#3
+└── agent: critic         tokens=430  latency=0.6s
+```
+
+Because the contract is OTLP, the same collector serves LangGraph, CrewAI,
+AutoGen, and OpenAI runs identically — four adapters, one ingestion path. The
+Go collector authenticates each SDK, then writes spans to **ClickHouse** for
+high-volume telemetry and rollups, while **Postgres** holds control-plane state.
+
+## The key idea: record tool outputs, inject them on replay
+
+Re-running an agent against live tools is non-deterministic and expensive — the
+web changed, the database changed, the model sampled differently. So replay must
+not touch the outside world at all.
+
+AgentMesh records **tool responses at trace time** and injects them on replay.
+The agent believes it is calling `web.search`; the replay engine intercepts the
+call and returns the exact bytes that tool produced during the original run:
+
+```go
+// Conceptually: at replay time, tool calls resolve from the trace,
+// not from the network.
+func (r *ReplayEngine) Call(span TraceSpan, req ToolRequest) ToolResponse {
+    if rec, ok := r.recorded[span.ID][req.Fingerprint()]; ok {
+        return rec // exact bytes from the original run
+    }
+    return errMissingRecording(req) // replay must be hermetic
+}
+```
+
+A historical failure now reproduces **exactly**, every time. That turns the worst
+part of agent development — "it failed once in production and I can't get it to
+happen again" — into a deterministic test case. You can iterate on a prompt or a
+planning heuristic and re-run the *same* recorded world to see whether your change
+actually fixes the bug, without paying for a single live tool call.
+
+Large payloads that would bloat the span store are offloaded to **MinIO** as
+I/O blobs and referenced by the span, so recordings stay complete without turning
+ClickHouse into a file server. **Redis** carries live span pub/sub so the console
+streams a run as it happens.
+
+## Governance without rewrites
+
+Tool access is where agents get dangerous, and it is usually ungoverned. The
+**MCP gateway** proxies any Model Context Protocol server, issuing
+OAuth 2.1-style tokens and applying guardrail policy globally — before a tool call
+ever reaches the underlying server.
+
+- **Auth** — every tool call carries a scoped, revocable token.
+- **Audit** — the same span that feeds observability *is* the audit record.
+- **Guardrails** — policy is enforced at the gateway, not sprinkled through agent code.
+
+Teams govern tool access **without touching agent code**. Point your MCP client at
+the gateway instead of the raw server, and policy, audit, and replay recording
+come for free.
+
+## Cost and anomalies fall out of the model
+
+Once every run is a DAG of spans with token counts, cost tracking is just a query.
+AgentMesh attributes spend **per agent, per tool, per user**, and an anomaly
+detector watches for loops and spikes — an agent stuck retrying, a tool suddenly
+10× more expensive — with threshold alerting on top.
+
+The system is **eight milestones complete**: foundation, OTLP collection, query
+API, framework adapters, web console, auth, MCP governance, replay, anomaly
+detection, alerting, and Helm charts. It ships as a monorepo of independently
+deployable, stateless Go services — collector, query-api, mcp-gateway,
+anomaly-detector, alerting-service, replay-engine — over a data tier of Postgres,
+ClickHouse, Redis, and MinIO, with Python and TypeScript SDKs and a
+React/TypeScript console reading through the query API.
+
+## Treat agents like software
+
+The lesson from decades of distributed systems is that you cannot operate what
+you cannot observe, and you cannot debug what you cannot reproduce. Agents are no
+different. Emit structured traces, record the world your tools returned, and
+replay it deterministically — then an agent run stops being a séance and starts
+being software.

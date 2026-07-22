@@ -1,0 +1,124 @@
+---
+title: "No LLM in the Loop"
+description: "How CodeGraph analyzes a repository and remediates real issues with a seven-agent swarm that never calls a language model — a symbol graph, a blast-radius health score, a critic/judge pipeline, and a verify-before-apply fixer."
+date: "2026-06-18"
+tags: ["CodeGraph", "Determinism", "Static Analysis", "TypeScript", "Developer Tools"]
+category: "Developer Tools"
+---
+
+Most "AI for code" tools share a hidden dependency: an API key. Point them at a
+repository and they embed it, stuff chunks into a context window, and ask a model
+to guess what is wrong. The output is fluent and occasionally correct, but it is
+also non-deterministic, unauditable, and metered by the token.
+
+CodeGraph takes the opposite bet. It turns a git repository into a symbol-level
+knowledge graph, scores its health, and runs a swarm of seven specialist agents
+that find and **verifiably fix** real issues — with **zero LLM keys needed**. The
+same repository produces the same findings on every run, because there is no
+model in the loop to be non-deterministic about.
+
+## A graph, not an embedding
+
+The foundation is structure, not similarity. `indexer.ts` clones a repo, scans
+it, and hands the source to `codeintel/*`, which parses each file with
+Tree-sitter and resolves symbols into a typed graph: functions, classes, and
+their call edges. On `expressjs/express` that graph is concrete and inspectable —
+**123 symbols, 94 edges, 14 real call cycles, and 49 unreferenced functions**
+flagged for review.
+
+Because the graph is persistent and queryable, a deterministic pipeline can reason
+over it directly. There is no vector database and no Postgres; the whole thing is
+one Next.js app over a single SQLite file, with jobs run fire-and-forget in the
+same Node process.
+
+```ts
+// Every finding is a fact about the graph, not a model's opinion.
+interface Finding {
+  agent: AgentKind;        // Security | Performance | Refactor | ...
+  locus: SymbolRef;        // exact file + symbol
+  severity: Severity;      // raw signal from the specialist
+  blastRadius: number;     // fan-in reach through the call graph
+  confidence: number;      // corroboration across agents
+}
+```
+
+## Blast-radius health, explained
+
+A health score is only useful if you can explain it. CodeGraph weights every
+issue by its **blast radius** — how much of the codebase depends, transitively,
+on the symbol in question. A dead private helper and a broken function that forty
+call sites reach are not the same risk, and the score reflects that.
+
+The result is a single 0–100 number you can defend line by line, rather than a
+vibe. Crucially, the same score becomes the *acceptance gate* for automated
+fixes later on.
+
+## Seven specialists, then a critic and a judge
+
+Analysis runs as a swarm. Each specialist is deterministic and independent:
+
+- **Security** — dangerous sinks, injection surfaces, unsafe APIs.
+- **Performance** — quadratic loops, redundant work, hot-path waste.
+- **Refactor** — complexity, duplication, tangled responsibilities.
+- **Dead-code** — the 49 unreferenced functions above.
+- **Dependency** — unused, risky, or cyclic module relationships.
+- **Architecture** — layering violations and call cycles.
+- **Test** — coverage gaps around high-blast-radius symbols.
+
+No specialist calls a model, so there is no run-to-run drift on the same repo. A
+**Critic** then dedupes findings by locus and cross-corroborates them — two
+agents flagging the same symbol raises confidence, and duplicates collapse into
+one. A **Judge** ranks what survives:
+
+```
+score = severity × log(blastRadius) × confidence × effortBonus
+      → P0 | P1 | P2 | P3
+```
+
+The `log(blastRadius)` term keeps a single catastrophic hotspot from drowning a
+long tail of small wins, and `effortBonus` nudges cheap, high-value fixes up the
+queue. The whole ranking is arithmetic you can reproduce by hand.
+
+## Verified fixes, not suggestions
+
+The part that separates CodeGraph from a linter is the **Fixer**, and its
+governing rule is *verify before apply*. It never edits your working tree
+optimistically. Instead it:
+
+1. Clones the repository into a disposable sandbox.
+2. Applies a safe codemod for the finding.
+3. **Re-indexes** the sandbox from scratch.
+4. Requires the health score **not to regress**.
+5. Only then emits a real, applyable unified git diff.
+
+If the re-indexed score drops, the fix is discarded — the graph itself is the
+test oracle. On `expressjs/express` this loop produced **31 real fixes across 27
+files** with an actual, re-measured score gain, not a promise of one.
+
+```bash
+# The fixer's contract, distilled:
+score_before = index(repo)
+apply(codemod)
+score_after  = index(sandbox)   # full re-index, not a patch estimate
+assert score_after >= score_before
+emit_unified_diff()
+```
+
+## Determinism is a feature, not a limitation
+
+Refusing to call a model imposes discipline. Every specialist must encode its
+judgment as an algorithm over the graph, every severity must trace to a concrete
+edge or metric, and every fix must survive a real re-index. The payoff is a tool
+whose output you can trust in CI: same input, same findings, same diffs, every
+time — and covered by **96/96 tests** across the security, indexer, codeintel,
+executor, layout, and tenant-isolation suites.
+
+It also survives constraints that would sink a heavier design. Tree-sitter
+parsing originally OOM-killed the server on Render's Starter tier; after a
+documented postmortem, the full pipeline now indexes `octocat/Hello-World` and
+`expressjs/express` end to end inside a container capped at
+`--memory=512m --cpus=0.5`, verified by an adversarial Docker smoke test on every
+push.
+
+You do not need a language model to understand a codebase. You need the right
+structure — and the willingness to make every claim reproducible.

@@ -1,0 +1,68 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 3415 >>
+stream
+BT /F2 30 Tf 0.12 0.11 0.10 rg 54 738 Td (Archdex) Tj ET
+BT /F1 11.5 Tf 0.878 0.396 0.227 rg 54 718 Td (Independent Software Engineer  AI Systems & Developer Tooling) Tj ET
+BT /F1 9 Tf 0.42 0.40 0.37 rg 54 703 Td (github.com/archdex-art   ·   halfwitpirate@gmail.com   ·   Remote · Worldwide) Tj ET
+0.80 0.78 0.75 RG 0.7 w 54 687 m 558 687 l S
+BT /F2 9 Tf 0.878 0.396 0.227 rg 54 667 Td (SUMMARY) Tj ET
+BT /F1 9.5 Tf 0.42 0.40 0.37 rg 54 652 Td (Independent engineer building infrastructure-grade AI systems and developer tooling end to end ) Tj ET
+BT /F1 9.5 Tf 0.42 0.40 0.37 rg 54 640 Td (architecture, implementation, security hardening, CI, documentation, and deployment. Ships across Go,) Tj ET
+BT /F1 9.5 Tf 0.42 0.40 0.37 rg 54 628 Td (Rust, TypeScript, and Python, with a bias for determinism, verifiable results, and security in the) Tj ET
+BT /F1 9.5 Tf 0.42 0.40 0.37 rg 54 616 Td (open.) Tj ET
+0.80 0.78 0.75 RG 0.7 w 54 594 m 558 594 l S
+BT /F2 9 Tf 0.878 0.396 0.227 rg 54 576 Td (SELECTED WORK) Tj ET
+BT /F2 10 Tf 0.12 0.11 0.10 rg 54 560 Td (AgentMesh  Go) Tj ET
+BT /F1 9 Tf 0.42 0.40 0.37 rg 54 547 Td (Framework-agnostic control plane for AI agents: OpenTelemetry tracing, deterministic replay, and MCP) Tj ET
+BT /F1 9 Tf 0.42 0.40 0.37 rg 54 535.5 Td (governance over ClickHouse/Postgres/Redis/MinIO. 8/8 milestones complete.) Tj ET
+BT /F2 10 Tf 0.12 0.11 0.10 rg 54 517 Td (CodeGraph  TypeScript / Next.js) Tj ET
+BT /F1 9 Tf 0.42 0.40 0.37 rg 54 504 Td (Turns a repo into a symbol-level knowledge graph and runs a deterministic 7-agent remediation swarm with) Tj ET
+BT /F1 9 Tf 0.42 0.40 0.37 rg 54 492.5 Td (verified fixes  no LLM keys. Live on Render; 96/96 tests.) Tj ET
+BT /F2 10 Tf 0.12 0.11 0.10 rg 54 474 Td (SuperSearch  Rust / Tauri) Tj ET
+BT /F1 9 Tf 0.42 0.40 0.37 rg 54 461 Td (Intent-driven runtime for macOS: natural language ’ replayable task graphs, driven through an) Tj ET
+BT /F1 9 Tf 0.42 0.40 0.37 rg 54 449.5 Td (object-capability security model with an append-only journal and WASM plugin sandbox.) Tj ET
+BT /F2 10 Tf 0.12 0.11 0.10 rg 54 431 Td (Live API Inspector  TypeScript) Tj ET
+BT /F1 9 Tf 0.42 0.40 0.37 rg 54 418 Td (Privacy-first Chrome DevTools extension: semantic endpoint clustering, performance intelligence, and AI) Tj ET
+BT /F1 9 Tf 0.42 0.40 0.37 rg 54 406.5 Td (root-cause analysis with local secret redaction.) Tj ET
+BT /F2 10 Tf 0.12 0.11 0.10 rg 54 388 Td (Browser Memory AI  TypeScript) Tj ET
+BT /F1 9 Tf 0.42 0.40 0.37 rg 54 375 Td (Local-first browser knowledge graph: entity extraction, an embedding pipeline, and hybrid full-text +) Tj ET
+BT /F1 9 Tf 0.42 0.40 0.37 rg 54 363.5 Td (vector recall behind a plugin SDK.) Tj ET
+BT /F2 10 Tf 0.12 0.11 0.10 rg 54 345 Td (CodeGraph Local  TypeScript) Tj ET
+BT /F1 9 Tf 0.42 0.40 0.37 rg 54 332 Td (Standalone, offline VS Code extension bringing the symbol graph, health score, and 7-agent swarm in-process) Tj ET
+BT /F1 9 Tf 0.42 0.40 0.37 rg 54 320.5 Td (via the TypeScript compiler API.) Tj ET
+0.80 0.78 0.75 RG 0.7 w 54 298 m 558 298 l S
+BT /F2 9 Tf 0.878 0.396 0.227 rg 54 280 Td (CORE STACK) Tj ET
+BT /F1 9.5 Tf 0.12 0.11 0.10 rg 54 265 Td (Go · Rust · TypeScript · Python · Next.js · React · Tauri · OpenTelemetry · Model Context Protocol ·) Tj ET
+BT /F1 9.5 Tf 0.12 0.11 0.10 rg 54 253 Td (ClickHouse · Postgres · Redis · Vector Search · WASM · Docker · CI/CD · Security hardening) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000003718 00000 n 
+0000003788 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+3863
+%%EOF
