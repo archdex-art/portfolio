@@ -175,14 +175,12 @@ export function Stack() {
             </div>
             <ul className="mt-5 space-y-5">
               {roadmap.map((r) => (
-                <li key={r.title} className="grid grid-cols-[auto_1fr] gap-x-3">
-                  <span className="mt-0.5 font-mono text-[0.62rem] uppercase tracking-widest text-sage-dim">
+                <li key={r.title} className="flex flex-col gap-1.5">
+                  <span className="font-mono text-[0.62rem] uppercase tracking-widest text-sage-dim">
                     {r.label}
                   </span>
-                  <div>
-                    <p className="text-sm text-ink">{r.title}</p>
-                    <p className="mt-1 text-xs leading-relaxed text-ink-dim">{r.detail}</p>
-                  </div>
+                  <p className="text-sm text-ink">{r.title}</p>
+                  <p className="text-xs leading-relaxed text-ink-dim">{r.detail}</p>
                 </li>
               ))}
             </ul>
