@@ -44,27 +44,34 @@ Node 20+ required (Next.js 16 / React 19).
 
 ---
 
-## Before you deploy — replace these placeholders
+## Deployed
 
+Live at **[portfolio-sandy-mu-36.vercel.app](https://portfolio-sandy-mu-36.vercel.app)**
+(Vercel project `koushikarchy-gmailcoms-projects/portfolio`, source pushed to
+[`github.com/archdex-art/portfolio`](https://github.com/archdex-art/portfolio)).
 Real facts (projects, journey, skills, recognition) are sourced from
-`github.com/archdex-art` and are ready to ship as-is. Contact email is set to
-the real address (`halfwitpirate@gmail.com`). One thing is still a placeholder
-and must be filled in before this goes live:
+`github.com/archdex-art`. Contact email is the real address
+(`halfwitpirate@gmail.com`); `siteUrl` in `lib/site.ts` matches the live domain
+above — update both if you move to a custom domain.
 
-1. **`lib/site.ts`**
-   - `siteUrl: "https://archdex.dev"` → your real deployed domain (used by
-     metadata, sitemap, robots, and JSON-LD).
-2. **`public/resume.pdf`** — a real one-page PDF is already generated
-   (`scripts/gen-resume.mjs`) from the same project data as the site. Regenerate
-   it any time with `node scripts/gen-resume.mjs` after editing the script, or
-   swap in your own PDF at the same path.
-3. **Contact email delivery** — the form works out of the box (validates,
-   rate-limits, and logs to the server console in dev). To actually send email,
-   set `RESEND_API_KEY` ([resend.com](https://resend.com)) in your environment;
-   without it, submissions succeed and are logged server-side only.
-4. **Booking link (optional)** — set `NEXT_PUBLIC_CAL_URL` (e.g. a Cal.com link)
-   to show a real "Book a call" button; otherwise the Contact section shows a
-   graceful "email to schedule" fallback instead of a fake calendar embed.
+Auto-deploy-on-push isn't wired up yet (the Vercel account and the
+`archdex-art` GitHub account aren't connected) — redeploy manually with
+`npx vercel --prod` after pushing, or connect the accounts in the Vercel
+dashboard under Settings → Git to enable it.
+
+## Notes for running this yourself
+
+- **`public/resume.pdf`** — a real one-page PDF is already generated
+  (`scripts/gen-resume.mjs`) from the same project data as the site. Regenerate
+  it any time with `node scripts/gen-resume.mjs` after editing the script, or
+  swap in your own PDF at the same path.
+- **Contact email delivery** — the form works out of the box (validates,
+  rate-limits, and logs to the server console in dev). To actually send email,
+  set `RESEND_API_KEY` ([resend.com](https://resend.com)) in your environment;
+  without it, submissions succeed and are logged server-side only.
+- **Booking link (optional)** — set `NEXT_PUBLIC_CAL_URL` (e.g. a Cal.com link)
+  to show a real "Book a call" button; otherwise the Contact section shows a
+  graceful "email to schedule" fallback instead of a fake calendar embed.
 
 ---
 
@@ -190,17 +197,21 @@ scripts/gen-resume.mjs    generates public/resume.pdf (no dependencies)
 
 ---
 
-## Deployment (Vercel)
+## Redeploying
 
-1. Push this repo to GitHub.
-2. Import it in Vercel — framework preset "Next.js" is auto-detected.
-3. Set environment variables in the Vercel dashboard:
-   - `RESEND_API_KEY` (optional — enables real contact-form email)
-   - `NEXT_PUBLIC_CAL_URL` (optional — enables the "Book a call" link)
-4. Update `siteUrl` and `email` in `lib/site.ts` to your real domain/address
-   *before* the first deploy, then redeploy so metadata/sitemap/JSON-LD embed
-   the correct URL.
-5. Deploy. Static pages are served from the edge; `/api/contact` runs as a
-   Node serverless function (`export const runtime = "nodejs"`).
+Already live (see **Deployed**, above). To ship further changes:
+
+```bash
+git add -A && git commit -m "…" && git push
+npx vercel --prod          # manual deploy — Git auto-deploy isn't connected yet
+```
+
+Optional environment variables, set via `npx vercel env add <NAME> production`
+or the Vercel dashboard:
+- `RESEND_API_KEY` — enables real contact-form email delivery.
+- `NEXT_PUBLIC_CAL_URL` — enables the "Book a call" link.
+
+Static pages are served from the edge; `/api/contact` runs as a Node
+serverless function (`export const runtime = "nodejs"`).
 
 Any other Node 20+ host works identically via `npm run build && npm run start`.

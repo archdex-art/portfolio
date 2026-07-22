@@ -9,8 +9,7 @@ export const site = {
   shortTitle: "AI Systems & Developer Tooling Engineer",
   description:
     "Archdex builds AI-systems infrastructure and developer tooling — agent observability, deterministic code-intelligence swarms, and intent-driven runtimes. Go · Rust · TypeScript · Python.",
-  // TODO: replace with your real deployment URL before shipping.
-  siteUrl: "https://archdex.dev",
+  siteUrl: "https://portfolio-sandy-mu-36.vercel.app",
   email: "halfwitpirate@gmail.com",
   location: "Remote · Worldwide",
   availability: "Available for select work",
