@@ -51,7 +51,7 @@ Live at **[portfolio-sandy-mu-36.vercel.app](https://portfolio-sandy-mu-36.verce
 [`github.com/archdex-art/portfolio`](https://github.com/archdex-art/portfolio)).
 Real facts (projects, journey, skills, recognition) are sourced from
 `github.com/archdex-art`. Contact email is the real address
-(`halfwitpirate@gmail.com`); `siteUrl` in `lib/site.ts` matches the live domain
+(`koushik.archy@gmail.com`); `siteUrl` in `lib/site.ts` matches the live domain
 above — update both if you move to a custom domain.
 
 Auto-deploy-on-push isn't wired up yet (the Vercel account and the

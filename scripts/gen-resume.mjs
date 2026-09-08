@@ -43,7 +43,7 @@ text("Archdex", { size: 30, font: "F2", color: INK });
 gap(20);
 text("Independent Software Engineer — AI Systems & Developer Tooling", { size: 11.5, font: "F1", color: COPPER });
 gap(15);
-text("github.com/archdex-art   ·   halfwitpirate@gmail.com   ·   Remote · Worldwide", { size: 9, color: DIM });
+text("github.com/archdex-art   ·   koushik.archy@gmail.com   ·   Remote · Worldwide", { size: 9, color: DIM });
 gap(16); rule(); gap(20);
 
 // ---- Summary ----

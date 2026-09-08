@@ -12,7 +12,7 @@ export const site = {
   description:
     "Archdex builds AI-systems infrastructure and developer tooling — agent observability, deterministic code-intelligence swarms, and intent-driven runtimes. Go · Rust · TypeScript · Python.",
   siteUrl: "https://portfolio-sandy-mu-36.vercel.app",
-  email: "halfwitpirate@gmail.com",
+  email: "koushik.archy@gmail.com",
   location: "Hyderabad, India · Remote",
   availability: "Available for select work",
   avatar: "https://avatars.githubusercontent.com/u/237775595?v=4",
