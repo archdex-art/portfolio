@@ -106,7 +106,7 @@ export function Work() {
                 onClick={() => setActive(f)}
                 aria-pressed={isActive}
                 className={[
-                  "rounded-full border px-4 py-2 font-mono text-xs tracking-wide transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-copper-bright",
+                  "inline-flex min-h-[44px] items-center justify-center rounded-full border px-4 font-mono text-xs tracking-wide transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-copper-bright",
                   isActive
                     ? "border-copper bg-copper/15 text-copper-bright"
                     : "border-hairline bg-surface/40 text-ink-dim hover:border-hairline-strong hover:text-ink",

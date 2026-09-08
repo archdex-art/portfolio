@@ -15,9 +15,22 @@ export const journey: JourneyEntry[] = [
     highlights: [
       "Shipped AgentMesh: a framework-agnostic control plane for AI agents (Go, OTel, ClickHouse) through 8 complete milestones.",
       "Launched CodeGraph live on Render — a deterministic 7-agent code-remediation swarm with 96/96 tests and zero LLM dependency.",
-      "Built SuperSearch, a Rust/Tauri intent-driven runtime for macOS with an object-capability security model.",
+      "Built land: reconciles what a coding agent claimed against what it observably ran, with 0 false accusations across its own 18-session dev corpus.",
     ],
     tags: ["Go", "Rust", "TypeScript", "Python", "Systems Design"],
+  },
+  {
+    period: "2026 · Q3–Q4",
+    title: "Trust, Provenance & Applied Systems",
+    org: "land, Archboard, PRAMAAN",
+    summary:
+      "Turned from building agent infrastructure to auditing it — plus a return to native tooling and a first civic-tech system built for Smart India Hackathon 2026.",
+    highlights: [
+      "Built land: a hash-chained, tamper-evident evidence store that reconciles agent claims against transcripts, with redaction happening before anything touches disk.",
+      "Shipped Archboard, a native macOS dashboard for local Git projects — zero shell interpolation, zero macOS permission prompts, a global shortcut that steals no keys from other apps.",
+      "Architected PRAMAAN for SIH 2026 PS 26015: an eight-level epistemic ladder and append-only adjudication ledger reconciling watershed-development photo claims against satellite and terrain evidence — 488+620 tests at 100% branch coverage.",
+    ],
+    tags: ["TypeScript", "Rust", "Tauri", "Python", "FastAPI", "PostGIS"],
   },
   {
     period: "2026 · Q2–Q3",
@@ -66,7 +79,7 @@ export const journey: JourneyEntry[] = [
       "Explored the browser as a platform for intelligence and diagnostics — local-first knowledge graphs, network forensics, and privacy-preserving AI.",
     highlights: [
       "Built Live API Inspector, a privacy-first DevTools network intelligence HUD.",
-      "Built Browser Memory AI: hybrid FTS + vector recall over everything you read.",
+      "Built BrowseMesh: hybrid FTS + vector recall over everything you read.",
       "Designed local secret redaction so AI analysis never sees raw credentials.",
     ],
     tags: ["TypeScript", "React", "IndexedDB", "Manifest V3"],

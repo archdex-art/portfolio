@@ -20,6 +20,22 @@ const layout = [
   {
     span: "lg:col-span-2",
     live: false,
+    eyebrow: "text-sage",
+    border: "hover:border-sage/50 hover:shadow-[0_0_0_1px_rgba(122,148,110,0.18),0_28px_60px_-40px_rgba(122,148,110,0.5)]",
+    rule: "via-sage/60",
+    link: "group-hover:text-sage",
+  },
+  {
+    span: "lg:col-span-2",
+    live: false,
+    eyebrow: "text-sage",
+    border: "hover:border-sage/50 hover:shadow-[0_0_0_1px_rgba(122,148,110,0.18),0_28px_60px_-40px_rgba(122,148,110,0.5)]",
+    rule: "via-sage/60",
+    link: "group-hover:text-sage",
+  },
+  {
+    span: "lg:col-span-2",
+    live: false,
     eyebrow: "text-copper",
     border: "hover:border-copper/50 hover:shadow-[0_0_0_1px_rgba(199,123,74,0.18),0_28px_60px_-40px_rgba(199,123,74,0.5)]",
     rule: "via-copper/60",

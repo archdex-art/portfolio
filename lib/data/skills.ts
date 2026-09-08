@@ -64,6 +64,18 @@ export const recognition: Recognition[] = [
     href: "https://codegraph-8qqc.onrender.com",
   },
   {
+    kind: "Zero false accusations",
+    title: "land: 84 verified, 1 contradicted, 0 wrong",
+    detail: "Reconciled against land's own 18-session development corpus — the two false positives found during development are documented as regression tests, not silently fixed.",
+    href: "https://github.com/archdex-art/land",
+  },
+  {
+    kind: "Byte-identical, 100% coverage",
+    title: "PRAMAAN: 100% branch coverage, reproducible verdicts",
+    detail: "488 offline tests plus 620 against a live PostGIS instance; every verdict re-derives identically from its own lineage on demand — built for Smart India Hackathon 2026, PS 26015.",
+    href: "https://github.com/archdex-art/pramaan-sih26015",
+  },
+  {
     kind: "Reliability",
     title: "96/96 tests passing on CodeGraph",
     detail: "Security, indexer, code-intelligence, executor, layout, and tenant-isolation suites, with an adversarial Docker smoke test on every push.",
@@ -79,7 +91,7 @@ export const recognition: Recognition[] = [
     kind: "Milestones",
     title: "AgentMesh: 8 of 8 milestones complete",
     detail: "Foundation, OTLP collection, query API, framework adapters, console, auth, MCP governance, replay, anomaly detection, and Helm charts.",
-    href: "https://github.com/archdex-art/Agent-Mesh",
+    href: "https://github.com/archdex-art/AgentMesh",
   },
   {
     kind: "Verified benchmark",

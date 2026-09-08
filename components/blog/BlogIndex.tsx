@@ -70,7 +70,7 @@ export function BlogIndex({ posts, tags }: BlogIndexProps) {
             onClick={() => setActiveTag(null)}
             aria-pressed={activeTag === null}
             className={cn(
-              "rounded-full border px-3 py-1 font-mono text-[0.7rem] tracking-wide transition-colors",
+              "inline-flex min-h-[44px] items-center justify-center rounded-full border px-3.5 font-mono text-[0.7rem] tracking-wide transition-colors",
               activeTag === null
                 ? "border-copper bg-copper/10 text-copper-bright"
                 : "border-hairline bg-surface/60 text-ink-dim hover:border-hairline-strong hover:text-ink",
@@ -85,7 +85,7 @@ export function BlogIndex({ posts, tags }: BlogIndexProps) {
               onClick={() => setActiveTag((cur) => (cur === tag ? null : tag))}
               aria-pressed={activeTag === tag}
               className={cn(
-                "rounded-full border px-3 py-1 font-mono text-[0.7rem] tracking-wide transition-colors",
+                "inline-flex min-h-[44px] items-center justify-center rounded-full border px-3.5 font-mono text-[0.7rem] tracking-wide transition-colors",
                 activeTag === tag
                   ? "border-copper bg-copper/10 text-copper-bright"
                   : "border-hairline bg-surface/60 text-ink-dim hover:border-hairline-strong hover:text-ink",

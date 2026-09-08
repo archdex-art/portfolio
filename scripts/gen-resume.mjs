@@ -62,7 +62,7 @@ const work = [
   ["CodeGraph — TypeScript / Next.js", "Turns a repo into a symbol-level knowledge graph and runs a deterministic 7-agent remediation swarm with verified fixes — no LLM keys. Live on Render; 96/96 tests."],
   ["SuperSearch — Rust / Tauri", "Intent-driven runtime for macOS: natural language → replayable task graphs, driven through an object-capability security model with an append-only journal and WASM plugin sandbox."],
   ["Live API Inspector — TypeScript", "Privacy-first Chrome DevTools extension: semantic endpoint clustering, performance intelligence, and AI root-cause analysis with local secret redaction."],
-  ["Browser Memory AI — TypeScript", "Local-first browser knowledge graph: entity extraction, an embedding pipeline, and hybrid full-text + vector recall behind a plugin SDK."],
+  ["BrowseMesh — TypeScript", "Local-first browser knowledge graph: entity extraction, an embedding pipeline, and hybrid full-text + vector recall behind a plugin SDK."],
   ["CodeGraph Local — TypeScript", "Standalone, offline VS Code extension bringing the symbol graph, health score, and 7-agent swarm in-process via the TypeScript compiler API."],
 ];
 for (const [title, desc] of work) {

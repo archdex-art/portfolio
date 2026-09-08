@@ -2,7 +2,8 @@ export type Category =
   | "AI Infrastructure"
   | "Developer Tools"
   | "Runtime & Systems"
-  | "Browser Extensions";
+  | "Browser Extensions"
+  | "Civic & Applied Systems";
 
 export interface ProjectLink {
   label: string;

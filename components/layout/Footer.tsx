@@ -58,7 +58,7 @@ export function Footer() {
         </div>
 
         <div className="mt-14 flex flex-col items-start justify-between gap-4 border-t border-hairline pt-8 text-xs text-ink-faint md:flex-row md:items-center">
-          <p>© {year} {site.name}. Designed &amp; built from scratch.</p>
+          <p>© {year} {site.realName} ({site.name}). Designed &amp; built from scratch.</p>
           <p className="font-mono">Fraunces · Manrope · JetBrains Mono</p>
         </div>
       </div>

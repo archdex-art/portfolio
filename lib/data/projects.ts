@@ -18,8 +18,8 @@ export const projects: Project[] = [
     featured: true,
     primaryLanguage: "Go",
     stack: ["Go", "OpenTelemetry", "ClickHouse", "Postgres", "Redis", "MinIO", "gRPC", "React", "Python SDK", "TypeScript SDK"],
-    repo: "https://github.com/archdex-art/Agent-Mesh",
-    links: [{ label: "Runbook", href: "https://github.com/archdex-art/Agent-Mesh/blob/main/docs/RUNBOOK.md" }],
+    repo: "https://github.com/archdex-art/AgentMesh",
+    links: [{ label: "Runbook", href: "https://github.com/archdex-art/AgentMesh/blob/main/docs/RUNBOOK.md" }],
     metrics: [
       { value: "8/8", label: "milestones complete" },
       { value: "5", label: "stateless Go services" },
@@ -205,8 +205,8 @@ export const projects: Project[] = [
       "Manifest V3 extension: a background service worker drives the Chrome Debugger API, a decoupled EventBus/PluginManager mediates capture, an AI gateway with a redaction layer performs clustering/performance/root-cause analysis, and a React 19 DevTools panel renders the HUD over Dexie-backed IndexedDB storage.",
   },
   {
-    slug: "browser-memory-ai",
-    name: "Browser Memory AI",
+    slug: "browsemesh",
+    name: "BrowseMesh",
     tagline: "A knowledge graph for everything you browse",
     summary:
       "A local-first browser extension that turns your browsing into a searchable knowledge graph — entity extraction, an embedding pipeline, and hybrid full-text + vector search behind a plugin SDK.",
@@ -217,9 +217,9 @@ export const projects: Project[] = [
     featured: false,
     primaryLanguage: "TypeScript",
     stack: ["TypeScript", "Manifest V3", "IndexedDB", "Vector search", "compromise NLP", "Vite"],
-    repo: "https://github.com/archdex-art/browser-memory-ai",
+    repo: "https://github.com/archdex-art/BrowseMesh",
     links: [
-      { label: "System architecture", href: "https://github.com/archdex-art/browser-memory-ai/blob/main/docs/architecture/SYSTEM_ARCHITECTURE.md" },
+      { label: "System architecture", href: "https://github.com/archdex-art/BrowseMesh/blob/main/docs/architecture/SYSTEM_ARCHITECTURE.md" },
     ],
     metrics: [
       { value: "Hybrid", label: "FTS + vector" },
@@ -300,6 +300,150 @@ export const projects: Project[] = [
     architecture:
       "src/engine/*: a gitignore-honoring file scanner → TS Compiler API symbol extractor → cross-file graph builder (NodeNext resolver, fanIn/fanOut) → blast-radius health score → deterministic query engine (Tarjan/BFS) → 7-specialist orchestrator (critic + judge) → sandboxed fix executor, rendered by a React webview docked in the Activity Bar.",
   },
+  {
+    slug: "land",
+    name: "land",
+    tagline: "Prove what your coding agents actually ran",
+    summary:
+      "Reconciles what an AI coding agent claimed against what it observably executed — reading the session transcripts agents already write to disk, with zero servers and zero runtime dependencies.",
+    category: "Developer Tools",
+    year: "2026",
+    role: "Sole architect & engineer",
+    status: "Active",
+    featured: true,
+    primaryLanguage: "TypeScript",
+    stack: ["TypeScript", "Node.js", "SQLite", "GitHub Actions"],
+    repo: "https://github.com/archdex-art/land",
+    links: [{ label: "Example CI gate", href: "https://github.com/archdex-art/land/blob/main/.github/workflows/example-land-gate.yml" }],
+    metrics: [
+      { value: "52", label: "tests" },
+      { value: "0", label: "false accusations" },
+      { value: "84/7/1", label: "verified / unknown / contradicted" },
+    ],
+    accent: "amber",
+    problem:
+      "Agent output roughly doubled while review capacity didn't — PR review time is up 91% and agentic PRs sit 5.3× longer before pickup. Every tool on the market optimizes for launching agents; nothing tells a reviewer whether last night's branch can be trusted before they read it.",
+    approach:
+      "land reads the session transcripts AI coding agents already write to disk and reconciles what an agent said it did against what it observably did — one verdict per claim: VERIFIED, CONTRADICTED, UNSUPPORTED, or UNKNOWN. UNKNOWN is a first-class, deliberate outcome: a trust tool that cries wolf once is muted forever, so land abstains whenever a transcript can't settle the question rather than guessing.",
+    challenges: [
+      {
+        heading: "Reverse-engineering an undocumented format",
+        body: "Three findings drive most of the code, none documented upstream: there is no exit code (a failing Bash result carries is_error: true, inferred never read), there is no test tool (so `cargo test | tail -20` masks the real exit status — land detects the masking and falls back to the runner's own summary), and a declined tool call is a non-execution, excluded from evidence entirely.",
+      },
+      {
+        heading: "Tamper-evident by construction",
+        body: "Observations are appended to a SQLite database as a SHA-256 hash chain, with UPDATE and DELETE blocked by database triggers. Verdicts are never stored — they're derived on read, so an opinion can never drift from the evidence describing it. A broken chain exits 2 and outranks every CI policy, including 'never'.",
+      },
+      {
+        heading: "Redact before write, not on read",
+        body: "Command output is redacted before it ever touches disk — prefixed credential families (AWS, GitHub, Anthropic, OpenAI, Slack, Stripe, npm, JWTs, database URLs), sensitive key/value pairs, and an entropy sweep. On the development corpus it caught a live Upstash Redis token in a shell command before it could persist.",
+      },
+    ],
+    results: [
+      "Measured on 18 real sessions in the project's own development corpus: 84 VERIFIED, 7 UNKNOWN, 1 CONTRADICTED (a true positive), 0 false accusations.",
+      "A single self-contained HTML report (land ui) with CSP default-src 'none' — no server, no network calls, keyboard-navigable, works in light and dark mode.",
+      "A CI gate with policy-based failure (contradicted / unsupported / unknown / never) and a soft-fail mode for adopting on an existing repository.",
+      "52 tests — the reconciliation suite is the specification; the HTML-escaping suite encodes the XSS defense contract.",
+    ],
+    architecture:
+      "transcript.ts normalizes Claude Code JSONL into sessions; commands.ts classifies shell commands and runner output; claims.ts extracts execution claims from assistant prose; reconcile.ts derives a verdict with abstention; redact.ts strips secrets at write time; store.ts is the hash-chained SQLite evidence store; ci.ts renders the CI gate (annotations, job summary, exit code).",
+  },
+  {
+    slug: "archboard",
+    name: "Archboard",
+    tagline: "A desktop dashboard for every project on your Mac",
+    summary:
+      "Find a project, see its live Git state, and open it in a terminal, editor, or browser in one click — a native macOS app built on Tauri, Rust, and React, reachable from a global shortcut in one keystroke.",
+    category: "Developer Tools",
+    year: "2026",
+    role: "Sole architect & engineer",
+    status: "Shipped",
+    featured: false,
+    primaryLanguage: "TypeScript",
+    stack: ["Tauri", "Rust", "React", "TypeScript", "Tailwind CSS", "SQLite"],
+    repo: "https://github.com/archdex-art/archboard",
+    demo: "https://archdex-art.github.io/archboard/",
+    links: [{ label: "Download for macOS", href: "https://archdex-art.github.io/archboard/" }],
+    metrics: [
+      { value: "⌥K", label: "global summon" },
+      { value: "23", label: "framework markers" },
+      { value: "0", label: "macOS permissions needed" },
+    ],
+    accent: "sage",
+    problem:
+      "Developers with dozens of local repositories lose time to a mundane loop: find the right folder, check whether it's clean, then manually open a terminal or editor pointed at it. Existing launchers don't know what Git actually says about a project.",
+    approach:
+      "A native menu-bar app that reads live Git state directly from each repository — never a cached guess — and turns one click into 'open in editor,' 'open in terminal, already cd'd,' or 'open on GitHub.' Colour marks state, never decoration: a clean board renders entirely in graphite, and unfinished work is the only colour on screen.",
+    challenges: [
+      {
+        heading: "A global shortcut that asks for nothing",
+        body: "⌥K is registered through Carbon's RegisterEventHotKey, which needs neither Accessibility nor Input Monitoring — deliberately avoiding ⌘Space, ⌥Space, and a global ⌘K that would steal the key from every editor and chat app. Media keys are refused outright because binding them would require the permission-prompting event-tap path.",
+      },
+      {
+        heading: "No shell, ever",
+        body: "The frontend never sees a path it can turn into a command — it passes a project id over typed IPC and Rust resolves the real path from SQLite. Every launch is std::process::Command with an argument array; every Git invocation is scoped with -C <path>. Manifests are read as text for substring matching, never parsed as code or executed.",
+      },
+      {
+        heading: "Detection without execution",
+        body: "Language, framework, and package manager are inferred from 23 top-level manifest markers with no recursion and nothing executed — discovery asks before adding any repository it finds under a scanned root.",
+      },
+    ],
+    results: [
+      "Keyboard-first throughout: ⌘K palette, ⌘N add, ⌘T terminal, ⌘I editor, ⌘R refresh — every binding re-recordable in Settings except core navigation.",
+      "36 frontend tests plus 11 Rust backend tests covering the Git porcelain parser, remote-URL handling, stack detection, and the bounded discovery walk.",
+      "Ships as an ad-hoc signed, notarization-free universal binary with a styled .dmg, built via a GitHub Actions release workflow.",
+    ],
+    architecture:
+      "React/TypeScript frontend (components, pages, features, stores) talks over typed Tauri IPC to a Rust backend: commands.ts-equivalent typed command surface, db/ (rusqlite + migrations), git/ (porcelain v2 parsing with a TTL cache), detect/ (marker → stack matrix), launcher/ (app detection and launching), and scan/ (the bounded discovery walk).",
+  },
+  {
+    slug: "pramaan",
+    name: "PRAMAAN",
+    tagline: "Evidence reconciliation for watershed monitoring",
+    summary:
+      "Turns geo-tagged field photographs into machine-testable claims, reconciled against independent satellite, terrain, and matched-control evidence, on an append-only hash-chained adjudication ledger — a Smart India Hackathon 2026 entry for the Ministry of Rural Development.",
+    category: "Civic & Applied Systems",
+    year: "2026",
+    role: "Sole architect & engineer",
+    status: "Research",
+    featured: true,
+    primaryLanguage: "Python",
+    stack: ["Python", "FastAPI", "React", "PostGIS", "Postgres", "NASA HLS imagery"],
+    repo: "https://github.com/archdex-art/pramaan-sih26015",
+    links: [{ label: "Runbook", href: "https://github.com/archdex-art/pramaan-sih26015/blob/main/pramaan/RUNNING.md" }],
+    metrics: [
+      { value: "488+620", label: "tests, two suites" },
+      { value: "100%", label: "branch coverage" },
+      { value: "8", label: "epistemic levels" },
+    ],
+    accent: "sage",
+    problem:
+      "Watershed development claims — a check dam built, vegetation recovering — are verified today mostly by trusting a submitted photograph. No labelled ground-truth corpus of Indian watershed photographs exists, and dashboards report false confidence by conflating correlation with proof.",
+    approach:
+      "Every claim runs through six evidence families — terrain, satellite, temporal, matched controls, rainfall context, and the photo itself, deliberately weighted lowest since it's the claim's own source — into an eight-level epistemic ladder (L0–L4, N1–N3) with a hard ceiling below causation. A pure reconciliation function (no IO, no clock, no randomness) turns an evidence bundle into a verdict, pinned by golden cases across all eight levels.",
+    challenges: [
+      {
+        heading: "Refusing to fabricate confidence",
+        body: "No accuracy figure is published — ten candidate ground-truth sources were checked and rejected, documented in the repo rather than papered over. The one claim in the public demo running on real NASA HLS imagery comes back 'N1 inconclusive' at 0.0615 confidence: the site's vegetation rose, but twelve terrain-matched controls rose just as much, and the difference is inside the noise. A dashboard would have called it success.",
+      },
+      {
+        heading: "An adjudication ledger that can't be edited",
+        body: "The database revokes UPDATE and DELETE from the application role at the schema level, not just the API. The hash chain is verifiable directly from psql without the application running, and every unadjudicated verdict is labelled PROVISIONAL everywhere, including exported reports, until a named officer signs it.",
+      },
+      {
+        heading: "Byte-identical reproducibility",
+        body: "POST /api/v1/verdicts/{id}/recompute re-derives a stored verdict from its own lineage and must return identical: true — the reconciliation engine is a pure function, so a verdict either reproduces exactly or the bug is real, never ambiguous.",
+      },
+    ],
+    results: [
+      "Three role-scoped workspaces (Field, Monitoring, Administration) with server-side role → capability mapping rather than hardcoded UI checks.",
+      "Real evidence capture: EXIF/GPS extraction, a classical-CV quality gate (blur and exposure, no ML), perceptual-hash deduplication, and full re-encode before storage.",
+      "488 tests plus mypy --strict at 100% branch coverage offline, plus 620 further tests against a throwaway PostGIS instance.",
+      "Explicit about its own limits: photo-model inference and the bulk district imagery pipeline are documented as not built, not stubbed.",
+    ],
+    architecture:
+      "FastAPI backend (api/v1 routes for ingest, claims, adjudication, analytics, audit) over a PostGIS schema, with services split into ingestion (EXIF, quality, dedupe), indicators, context (rainfall), and an audit/ledger module implementing the hash-chained, trigger-protected adjudication trail — fronted by a role-scoped React console.",
+  },
 ];
 
 export const categories: Category[] = [
@@ -307,6 +451,7 @@ export const categories: Category[] = [
   "Developer Tools",
   "Runtime & Systems",
   "Browser Extensions",
+  "Civic & Applied Systems",
 ];
 
 export function getProject(slug: string): Project | undefined {

@@ -64,7 +64,7 @@ export function About() {
         <Reveal className="lg:col-span-7">
           <div className="space-y-6 text-pretty text-lg leading-relaxed text-ink-dim">
             <p>
-              I&rsquo;m Archdex. I design and ship <span className="text-ink">infrastructure-grade tools end to end</span> —
+              I&rsquo;m Koushik Gaddam — I build under the name Archdex. I design and ship <span className="text-ink">infrastructure-grade tools end to end</span> —
               no team to hand the difficult parts to, no layer I don&rsquo;t own. From a Go control plane for AI agents to a
               Rust runtime kernel that drives macOS, I work across the whole stack in{" "}
               <span className="text-ink">Go, Rust, TypeScript, and Python</span>.

@@ -1,9 +1,11 @@
 /**
  * Central site configuration.
- * NOTE: `email` and `siteUrl` are placeholders — replace before deploying.
+ * `siteUrl` is the live Vercel deployment; `email` is real. Update `siteUrl`
+ * if a custom domain is added later.
  */
 export const site = {
   name: "Archdex",
+  realName: "Koushik Gaddam",
   handle: "archdex-art",
   title: "Independent Software Engineer — AI Systems & Developer Tooling",
   shortTitle: "AI Systems & Developer Tooling Engineer",
@@ -11,7 +13,7 @@ export const site = {
     "Archdex builds AI-systems infrastructure and developer tooling — agent observability, deterministic code-intelligence swarms, and intent-driven runtimes. Go · Rust · TypeScript · Python.",
   siteUrl: "https://portfolio-sandy-mu-36.vercel.app",
   email: "halfwitpirate@gmail.com",
-  location: "Remote · Worldwide",
+  location: "Hyderabad, India · Remote",
   availability: "Available for select work",
   avatar: "https://avatars.githubusercontent.com/u/237775595?v=4",
   socials: {

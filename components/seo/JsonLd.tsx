@@ -6,8 +6,8 @@ export function JsonLd() {
   const person = {
     "@context": "https://schema.org",
     "@type": "Person",
-    name: site.name,
-    alternateName: site.handle,
+    name: site.realName,
+    alternateName: [site.name, site.handle],
     url: site.siteUrl,
     image: site.avatar,
     jobTitle: site.title,
