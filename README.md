@@ -16,14 +16,13 @@ blue/purple SaaS template.
 
 | Layer | Choice |
 |---|---|
-| Framework | Next.js 16 (App Router, React Server Components) |
+| Framework | Next.js 16 (App Router, static export) |
 | Language | TypeScript, strict |
 | Styling | Tailwind CSS v4 (CSS-first `@theme` tokens, no `tailwind.config`) |
 | Motion | [`motion`](https://motion.dev) (the framer-motion successor) — `motion/react` |
 | Content | MDX via `next-mdx-remote/rsc` + `gray-matter` + `rehype-pretty-code`/`shiki` |
-| Validation | `zod` |
-| Email | `resend` (optional, gated by env var) |
-| Deployment target | Vercel (or any Node 20+ host) |
+| Forms | [Formspree](https://formspree.io) (`@formspree/react`) — no backend needed |
+| Deployment target | GitHub Pages (static export, no server) |
 
 No component library (shadcn/ui, MUI, etc.) — every primitive in `components/ui/`
 is hand-built for the aesthetic, kept small and dependency-free.
@@ -34,10 +33,10 @@ is hand-built for the aesthetic, kept small and dependency-free.
 
 ```bash
 npm install
-npm run dev     # http://localhost:3000
-npm run build   # production build
-npm run start   # serve the production build
-npm run lint    # eslint
+npm run dev       # http://localhost:3000
+npm run build     # static export → out/
+npm run preview   # serve out/ locally to sanity-check the export
+npm run lint       # eslint
 ```
 
 Node 20+ required (Next.js 16 / React 19).
@@ -46,18 +45,19 @@ Node 20+ required (Next.js 16 / React 19).
 
 ## Deployed
 
-Live at **[portfolio-sandy-mu-36.vercel.app](https://portfolio-sandy-mu-36.vercel.app)**
-(Vercel project `koushikarchy-gmailcoms-projects/portfolio`, source pushed to
-[`github.com/archdex-art/portfolio`](https://github.com/archdex-art/portfolio)).
-Real facts (projects, journey, skills, recognition) are sourced from
+Live at **[archdex-art.github.io/portfolio](https://archdex-art.github.io/portfolio)**
+via GitHub Pages, built and deployed automatically by
+[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) on every push to
+`main`. Real facts (projects, journey, skills, recognition) are sourced from
 `github.com/archdex-art`. Contact email is the real address
-(`koushik.archy@gmail.com`); `siteUrl` in `lib/site.ts` matches the live domain
-above — update both if you move to a custom domain.
+(`koushik.archy@gmail.com`); `siteUrl` and `basePath` (`lib/site.ts`,
+`lib/base-path.ts`) match the live domain above — update both if you move to a
+custom domain, and drop `basePath` entirely if you deploy to a root-level
+`<user>.github.io` repo instead of a project page.
 
-Auto-deploy-on-push isn't wired up yet (the Vercel account and the
-`archdex-art` GitHub account aren't connected) — redeploy manually with
-`npx vercel --prod` after pushing, or connect the accounts in the Vercel
-dashboard under Settings → Git to enable it.
+One-time setup for a fork: in the repo's **Settings → Pages**, set **Source**
+to **GitHub Actions**. After that, every push to `main` deploys — no manual
+step, no CLI, no account linking.
 
 ## Notes for running this yourself
 
@@ -65,10 +65,11 @@ dashboard under Settings → Git to enable it.
   (`scripts/gen-resume.mjs`) from the same project data as the site. Regenerate
   it any time with `node scripts/gen-resume.mjs` after editing the script, or
   swap in your own PDF at the same path.
-- **Contact email delivery** — the form works out of the box (validates,
-  rate-limits, and logs to the server console in dev). To actually send email,
-  set `RESEND_API_KEY` ([resend.com](https://resend.com)) in your environment;
-  without it, submissions succeed and are logged server-side only.
+- **Contact form** — wired to [Formspree](https://formspree.io) (`@formspree/react`),
+  which works from a fully static site with no backend. The form ID lives in
+  `components/sections/Contact.tsx` (`FORMSPREE_ID`) — sign up for your own
+  free Formspree form and swap it in. Spam is filtered by Formspree's own
+  honeypot convention (`_gotcha`) and its server-side heuristics.
 - **Booking link (optional)** — set `NEXT_PUBLIC_CAL_URL` (e.g. a Cal.com link)
   to show a real "Book a call" button; otherwise the Contact section shows a
   graceful "email to schedule" fallback instead of a fake calendar embed.
@@ -133,10 +134,9 @@ app/
   globals.css             design tokens (Tailwind v4 @theme) + base styles
   work/                   /work index + /work/[slug] case studies
   blog/                   /blog index + /blog/[slug] MDX posts
-  api/contact/route.ts     contact form endpoint (zod, honeypot, rate limit, Resend)
-  sitemap.ts robots.ts manifest.ts opengraph-image.tsx    SEO routes
+  sitemap.ts robots.ts manifest.ts opengraph-image.tsx    SEO routes (all force-static)
 components/
-  sections/               one file per homepage section (Hero, About, Work, Stack, …)
+  sections/               one file per homepage section (Hero, About, Work, Stack, Contact, …)
   ui/                     shared primitives (Button, Tag, Section, Reveal, ProjectVisual)
   layout/                 Header, Footer, Logo
   work/  blog/            page-specific components
@@ -144,7 +144,7 @@ components/
   seo/                    JsonLd
 lib/
   data/                   real content (projects, journey, skills)
-  site.ts  types.ts  utils.ts  blog.ts  rate-limit.ts
+  site.ts  types.ts  utils.ts  blog.ts  base-path.ts
 content/blog/             MDX posts
 scripts/gen-resume.mjs    generates public/resume.pdf (no dependencies)
 ```
@@ -167,8 +167,8 @@ scripts/gen-resume.mjs    generates public/resume.pdf (no dependencies)
 
 ## Performance
 
-- Static generation for every route except `/api/contact` (server-rendered on
-  demand) — `next build` output shows all marketing/content pages as `○`/`●`.
+- Fully static — every route is prerendered HTML at build time, no server, no
+  cold starts. `next build` output shows every page as `○`/`●`.
 - `next/font` self-hosts and subsets all three typefaces at build time.
 - No client JS for content that doesn't need it — sections are server
   components by default; only interactive pieces (`Work`, `Stack`,
@@ -182,36 +182,33 @@ scripts/gen-resume.mjs    generates public/resume.pdf (no dependencies)
 - `app/sitemap.ts` includes every static route plus every project and blog
   slug; `app/robots.ts` points at it.
 - `app/opengraph-image.tsx` renders a real, on-brand 1200×630 OG card via
-  `next/og` — no static image asset to keep in sync.
+  `next/og`, generated once at build time (`force-static`) — no static image
+  asset to keep in sync.
 - `Person` + `ItemList` JSON-LD in the root layout (`components/seo/JsonLd.tsx`).
 
 ## Security
 
-- Contact API: zod-validated input, a honeypot field, and an in-memory
-  per-IP rate limiter (`lib/rate-limit.ts`, 5 requests/60s). For multi-instance
-  production deployments, swap the in-memory `Map` for a shared store (e.g.
-  Upstash Redis) — noted in `lib/rate-limit.ts`.
+- Contact form submits directly to Formspree over HTTPS — no first-party
+  backend, no server secrets to leak. Spam is filtered by Formspree's own
+  honeypot field (`_gotcha`) and server-side heuristics, not custom code here.
 - All external links use `rel="noopener noreferrer"`.
-- No secrets in the client bundle — `RESEND_API_KEY` is read only in the
-  server-only API route.
+- Nothing in this repo runs a server, so there's no attack surface beyond the
+  static files themselves and Formspree's own security model.
 
 ---
 
 ## Redeploying
 
-Already live (see **Deployed**, above). To ship further changes:
+Already live (see **Deployed**, above) and fully automatic. To ship further
+changes:
 
 ```bash
 git add -A && git commit -m "…" && git push
-npx vercel --prod          # manual deploy — Git auto-deploy isn't connected yet
 ```
 
-Optional environment variables, set via `npx vercel env add <NAME> production`
-or the Vercel dashboard:
-- `RESEND_API_KEY` — enables real contact-form email delivery.
-- `NEXT_PUBLIC_CAL_URL` — enables the "Book a call" link.
+`.github/workflows/deploy.yml` builds and deploys on every push to `main` —
+no CLI, no manual step, no account to keep authenticated.
 
-Static pages are served from the edge; `/api/contact` runs as a Node
-serverless function (`export const runtime = "nodejs"`).
-
-Any other Node 20+ host works identically via `npm run build && npm run start`.
+Optional environment variable: `NEXT_PUBLIC_CAL_URL` enables the "Book a
+call" link — set it as a repository variable/secret and reference it in the
+workflow's `env:` if you want it baked into the static build.

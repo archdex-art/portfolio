@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { site } from "@/lib/site";
+import { BASE_PATH } from "@/lib/base-path";
 import { Logo } from "./Logo";
 
 export function Footer() {
@@ -49,7 +50,7 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a href="/resume.pdf" className="text-sm text-ink-dim transition-colors hover:text-copper">
+                <a href={`${BASE_PATH}/resume.pdf`} className="text-sm text-ink-dim transition-colors hover:text-copper">
                   Résumé
                 </a>
               </li>

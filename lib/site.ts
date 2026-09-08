@@ -1,7 +1,7 @@
 /**
  * Central site configuration.
- * `siteUrl` is the live Vercel deployment; `email` is real. Update `siteUrl`
- * if a custom domain is added later.
+ * `siteUrl` is the live GitHub Pages deployment; `email` is real. Update
+ * `siteUrl` if a custom domain is added later.
  */
 export const site = {
   name: "Archdex",
@@ -11,7 +11,7 @@ export const site = {
   shortTitle: "AI Systems & Developer Tooling Engineer",
   description:
     "Archdex builds AI-systems infrastructure and developer tooling — agent observability, deterministic code-intelligence swarms, and intent-driven runtimes. Go · Rust · TypeScript · Python.",
-  siteUrl: "https://portfolio-sandy-mu-36.vercel.app",
+  siteUrl: "https://archdex-art.github.io/portfolio",
   email: "koushik.archy@gmail.com",
   location: "Hyderabad, India · Remote",
   availability: "Available for select work",

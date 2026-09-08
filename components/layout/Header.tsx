@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { site } from "@/lib/site";
+import { BASE_PATH } from "@/lib/base-path";
 import { cn } from "@/lib/utils";
 import { Logo } from "./Logo";
 
@@ -64,7 +65,7 @@ export function Header() {
 
         <div className="flex items-center gap-2">
           <a
-            href="/resume.pdf"
+            href={`${BASE_PATH}/resume.pdf`}
             className="hidden rounded-full border border-hairline-strong px-4 py-2 text-sm text-ink transition-colors hover:border-copper hover:text-copper md:inline-flex"
           >
             Résumé
@@ -112,7 +113,7 @@ export function Header() {
               ))}
             </nav>
             <a
-              href="/resume.pdf"
+              href={`${BASE_PATH}/resume.pdf`}
               className="mt-8 inline-flex w-fit rounded-full bg-copper px-6 py-3 text-sm font-medium text-obsidian"
             >
               Download résumé
